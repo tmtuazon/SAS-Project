@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Portrait of Self</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --warm-white: #faf7f2;
+    --ink: #1a1612;
+    --dust: #8a7f74;
+    --terracotta: #b85c3a;
+    --sage: #6b7f6e;
+    --gold: #c4952a;
+    --section-gap: 7rem;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.6;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 4rem 2rem;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -10%; left: -10%;
+    width: 60%; height: 60%;
+    background: radial-gradient(ellipse at center, rgba(196,149,42,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -10%; right: -10%;
+    width: 50%; height: 50%;
+    background: radial-gradient(ellipse at center, rgba(184,92,58,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--dust);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .hero-title {
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-weight: 300;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.4s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--terracotta); }
+  .hero-subtitle {
+    margin-top: 2rem;
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--dust);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    opacity: 0;
+    animation: fadeUp 0.9s ease 0.6s forwards;
+  }
+  .hero-divider {
+    margin: 3rem auto 0;
+    width: 1px; height: 80px;
+    background: linear-gradient(to bottom, var(--terracotta), transparent);
+    opacity: 0;
+    animation: fadeUp 1s ease 0.8s forwards;
+  }
+
+  /* NAV DOTS */
+  .nav-dots {
+    position: fixed;
+    right: 2rem; top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--dust);
+    opacity: 0.4;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none; padding: 0;
+  }
+  .nav-dot.active, .nav-dot:hover {
+    opacity: 1;
+    background: var(--terracotta);
+    transform: scale(1.5);
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--terracotta), var(--gold));
+    z-index: 200;
+    transition: width 0.1s linear;
+  }
+
+  /* SECTIONS */
+  .section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 2rem var(--section-gap);
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .section.visible { opacity: 1; transform: translateY(0); }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, var(--terracotta), transparent);
+    max-width: 80px;
+  }
+  .section-title {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 2.5rem;
+    letter-spacing: -0.01em;
+  }
+  .section-title em { font-style: italic; color: var(--terracotta); }
+
+  /* BODY TEXT */
+  .body-text {
+    font-size: 1.05rem;
+    line-height: 1.95;
+    color: #2e2a25;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  /* PULL QUOTE */
+  .pull-quote {
+    margin: 3rem 0;
+    padding: 2rem 0 2rem 2.5rem;
+    border-left: 1px solid var(--gold);
+    font-size: 1.35rem;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.55;
+    position: relative;
+  }
+  .pull-quote::before {
+    content: '\201C';
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--gold);
+    opacity: 0.3;
+    position: absolute;
+    top: 0; left: -0.5rem;
+    font-style: normal;
+  }
+
+  /* PRINCIPLES BOX */
+  .principles-box {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 2.5rem;
+    margin: 2rem 0;
+  }
+  .principle {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .principle:last-child { margin-bottom: 0; }
+  .principle::before {
+    content: '—';
+    color: var(--terracotta);
+    font-family: 'DM Mono', monospace;
+    flex-shrink: 0;
+    margin-top: 0.05em;
+  }
+
+  /* MANIFESTO HEADER */
+  .manifesto-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    margin-top: 3.5rem;
+  }
+  .manifesto-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--dust);
+    white-space: nowrap;
+  }
+  .manifesto-title-sm {
+    font-size: 1.8rem;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  /* ORNAMENT */
+  .ornament {
+    text-align: center;
+    margin: 3rem 0;
+    color: var(--gold);
+    opacity: 0.5;
+    font-size: 1rem;
+    letter-spacing: 0.5em;
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 4rem 2rem 6rem;
+    border-top: 1px solid rgba(138,127,116,0.2);
+  }
+  .footer-mark {
+    font-size: 2.5rem;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--dust);
+    letter-spacing: 0.05em;
+  }
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--dust);
+    opacity: 0.6;
+    margin-top: 1rem;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<nav class="nav-dots" aria-label="Section navigation">
+  <button class="nav-dot active" data-target="hero" title="Home"></button>
+  <button class="nav-dot" data-target="part1" title="Part 1"></button>
+  <button class="nav-dot" data-target="part2" title="Part 2"></button>
+  <button class="nav-dot" data-target="part3" title="Part 3"></button>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <p class="hero-eyebrow">Personal Reflection &nbsp;·&nbsp; Understanding the Self</p>
+  <h1 class="hero-title">The <em>Evolving</em><br>Self</h1>
+  <p class="hero-subtitle">On identity, perception, and the art of becoming</p>
+  <div class="hero-divider"></div>
+</section>
+
+<!-- PART 1 -->
+<div id="part1">
+<section class="section">
+  <p class="section-label">Part One</p>
+  <h2 class="section-title">Relation of the Lessons to my current Self</h2>
+
+  <p class="body-text">The different lessons in this course helped me better understand how my self is continuously shaped by both internal and external influences. From the Perspectives of Self, I relate most to the idea that the self is dynamic rather than fixed. My definition of self as a combination of multiple aspects aligns with both essentialist and social constructivist views. There are traits within me that feel stable, yet my experiences and environment constantly reshape who I am.</p>
+
+  <p class="body-text">In terms of Biological Influences and Body Image, I recognize that while I generally have a healthy body image, it is still affected by external factors like social media. This reflects how biology and environment interact in shaping self-perception. My awareness of wanting to improve my health also shows how I actively engage in shaping my physical self.</p>
+
+  <p class="body-text">The Personality lesson is evident in my attributive and social self-descriptions. Being introverted, and private shows consistent personality traits, while my relationships as a daughter, sister, and friend highlight how my social roles contribute to my identity. My hesitation to easily trust others reflects both learned behavior and personality development over time.</p>
+
+  <p class="body-text">Through Identity Development, I see how my upbringing influenced my decision-making mindset. Viewing life as a series of consequences shows how early guidance shaped my identity and values. I am still in the process of exploring myself, especially as a student and young adult navigating independence.</p>
+
+  <p class="body-text">The Culture and Ethnicity module is reflected in my identity as a Filipino and as part of the anime subculture. As shown in our activity, anime influences my perspectives, values, and even how I relate to others, while still not defining me completely. It enhances my empathy and decision-making without replacing my personal judgment.</p>
+
+  <p class="body-text">From the Sexuality discussion, I learned to appreciate the complexity of identity and how terms like gender and sex are often misunderstood. This broadened my perspective and made me more open-minded toward others' experiences.</p>
+
+  <p class="body-text">Lastly, Mental Health and Wellbeing is seen in how I cope with stress, particularly academic pressure. Like my groupmates, I use coping mechanisms such as resting, eating, and occasionally venting to others. This shows that my mental wellbeing is influenced by both personal habits and shared social experiences.</p>
+
+  <div class="pull-quote">
+    Overall, these modules helped me realize that my self is not a single, fixed identity but a constantly evolving process shaped by my personality, experiences, culture, relationships, and choices.
+  </div>
+</section>
+</div>
+
+<!-- PART 2 -->
+<div id="part2">
+<section class="section">
+  <p class="section-label">Part Two</p>
+  <h2 class="section-title">How <em>Others</em> See Me</h2>
+
+  <p class="body-text">In summary, people's first impression of me generally falls into two main perspectives. Those who knew me before college often describe me as friendly, approachable, and cheerful, with a soft-spoken and attentive nature that makes conversations feel comfortable and engaging. Although some initially found me intimidating or serious because of my resting facial expression. This impression usually fades once they get to know me better.</p>
+
+  <p class="body-text">In contrast, those I met during college initially perceived me as quiet, distant, or even "masungit" during my adjustment period in my freshman year where I usually don't come out of my comfort zone so I usually only interacted with people I already knew.</p>
+
+  <p class="body-text">As they got to know me, their perception became more consistent, where they described me as talkative, engaging, and capable of carrying detailed conversations, even on simple topics. Many see me as analytical, logical and knowledgeable, which is likely influenced by my exposure to current news and my parents' discourses about that news being played on the television at home. They also see me as versatile where I am able to balance being responsible and focused on academics while being relaxed, humorous, and occasionally unfiltered with close friends.</p>
+
+  <p class="body-text">They also described me as a person who enjoys "tsismis" but prefers not to be involved in one. They also noticed me as a foodie since I am very open to exploring new food which also made me a "magastos" person in their eyes. These comments make sense since I enjoy eating desserts even though I am already full just to satisfy my cravings. Additionally, I also like to buy "pasalubong" for my family so they can also taste the food that I ate. They also noticed how I am very attentive to my hygiene especially with my teeth.</p>
+
+  <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+</section>
+</div>
+
+<!-- PART 3 -->
+<div id="part3">
+<section class="section">
+  <p class="section-label">Part Three</p>
+  <h2 class="section-title">My <em>Manifestos</em></h2>
+
+  <!-- (a) Personal Manifesto -->
+  <div class="manifesto-header">
+    <span class="manifesto-type">( a )</span>
+    <h3 class="manifesto-title-sm">My Personal Manifesto</h3>
+  </div>
+
+  <p class="body-text">My manifesto is a declaration of how I see myself, the world, and my place in it.</p>
+
+  <p class="body-text">I believe that a meaningful life is built through daily choices. It is not enough to understand my values, I must live them. Integrity, faith, growth, and compassion guide my actions. These are not just ideas I agree with, but standards I strive to achieve.</p>
+
+  <p class="body-text">My beliefs shape how I understand the world. I believe that people are capable of growth, that challenges are opportunities to improve, and that my actions define who I become. Above all, I believe in God's purpose and grace, and that my life has meaning beyond what is temporary.</p>
+
+  <p class="body-text">I strive to embody virtues that reflect who I want to be. I want to show discipline in my work, courage in difficulty, humility in success, and kindness in all interactions.</p>
+
+  <p class="body-text">My principles guide my actions:</p>
+
+  <div class="principles-box">
+    <div class="principle">I will do what is right, even when it is hard.</div>
+    <div class="principle">I will treat others with respect and understanding.</div>
+    <div class="principle">I will focus on what I can control and trust God with what I cannot.</div>
+  </div>
+
+  <p class="body-text">These internal foundations must align, because without alignment, I cannot live with clarity or purpose.</p>
+
+  <p class="body-text">My purpose is to grow as a person, honor God through my life, and use my abilities to serve others. As a student of computer science, I will use my knowledge responsibly. To solve problems, create meaningful work, and contribute positively to society.</p>
+
+  <p class="body-text">My intentions shape how I live each day. I choose to approach life with discipline, a willingness to learn, and a mindset focused on growth. I intend to remain grounded in faith and guided by purpose.</p>
+
+  <p class="body-text">My goals support this purpose. I aim to develop my skills, complete my education, and continuously improve myself while helping others grow through sharing knowledge and faith, including through free Bible studies.</p>
+
+  <p class="body-text">My worldview is that the world is a mix of struggle and opportunity. There is suffering, but there is also hope. People are imperfect but capable of change. Growth requires effort, reflection, and faith.</p>
+
+  <div class="pull-quote">
+    I will not live by chance, but by choice. I will continue learning, improving, and staying true to what I believe.
+  </div>
+
+  <div class="ornament">· · ·</div>
+
+  <!-- (b) Health Manifesto -->
+  <div class="manifesto-header">
+    <span class="manifesto-type">( b )</span>
+    <h3 class="manifesto-title-sm">My Health Manifesto</h3>
+  </div>
+
+  <p class="body-text">My health manifesto is a declaration of how I care for myself, physically, mentally, emotionally, and spiritually, so I can live a balanced and purposeful life.</p>
+
+  <p class="body-text">I believe that health is holistic. It is not only about the body, but also the mind and spirit. Taking care of myself allows me to fulfill my purpose and serve others effectively.</p>
+
+  <p class="body-text">I value discipline, balance, and consistency in maintaining my well-being. I believe that small, daily habits shape long-term health, and that caring for myself is a responsibility, not an option.</p>
+
+  <p class="body-text">I strive to continuously practice self-control, patience, and resilience. These virtues help me stay committed even when it is difficult to maintain healthy routines.</p>
+
+  <p class="body-text">My principles for health are simple:</p>
+
+  <div class="principles-box">
+    <div class="principle">I will take care of my body through proper rest, nutrition, and movement.</div>
+    <div class="principle">I will protect my mental health by managing stress and allowing time to rest.</div>
+    <div class="principle">I will nurture my spiritual health through prayer and reflection.</div>
+  </div>
+
+  <p class="body-text">These internal practices must align so I can maintain stability and avoid burnout.</p>
+
+  <p class="body-text">My purpose for staying healthy is to live fully, think clearly, and serve others effectively. Without health, I cannot perform at my best in my studies, relationships, or responsibilities.</p>
+
+  <p class="body-text">My intentions are to stay consistent, not perfect, which is to improve daily habits and remain mindful of my well-being.</p>
+
+  <p class="body-text">My goals include maintaining a balanced routine, staying physically active, managing academic stress, and building habits that support long-term health.</p>
+
+  <p class="body-text">My worldview is that health is a lifelong journey. There will be challenges and setbacks, but growth comes from consistency and discipline. A healthy life is built over time through intentional living.</p>
+
+  <div class="pull-quote">
+    I will take care of myself so I can live with purpose, clarity, and strength.
+  </div>
+
+</section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-mark">The Self, Always Becoming</p>
+  <p class="footer-note">Personal Reflection &nbsp;·&nbsp; Understanding the Self</p>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (scrolled / total * 100) + '%';
+  });
+
+  // Fade-in on scroll
+  const sections = document.querySelectorAll('.section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.06 });
+  sections.forEach(s => observer.observe(s));
+
+  // Nav dots
+  const dots = document.querySelectorAll('.nav-dot');
+  const targets = ['hero', 'part1', 'part2', 'part3'];
+  dots.forEach((dot, i) => {
+    dot.addEventListener('click', () => {
+      document.getElementById(targets[i]).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const sectionEls = targets.map(id => document.getElementById(id));
+  const dotObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const i = sectionEls.indexOf(e.target);
+        if (i > -1) {
+          dots.forEach(d => d.classList.remove('active'));
+          dots[i].classList.add('active');
+        }
+      }
+    });
+  }, { threshold: 0.3 });
+  sectionEls.forEach(el => dotObserver.observe(el));
+</script>
+</body>
+</html>
